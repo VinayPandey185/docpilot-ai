@@ -807,6 +807,20 @@ The application can be deployed using the following services:
 
 - Supabase
 
+## 🌐 Live Demo
+
+**Frontend**
+
+https://docpilot-ai-three.vercel.app
+
+**Backend API**
+
+https://docpilot-ai-backend.onrender.com
+
+**GitHub Repository**
+
+https://github.com/VinayPandey185/docpilot-ai
+
 ### Deployment Steps
 
 1. Deploy the backend to Render.
@@ -884,7 +898,7 @@ If you would like to improve DocPilot AI:
 
 GitHub
 
-https://github.com/VinayPandey185/docpilot-ai
+https://github.com/VinayPandey185/
 
 LinkedIn
 
