@@ -1,44 +1,84 @@
-// import { useAuth } from "../context/AuthContext";
+import Sidebar from "../components/layout/Sidebar";
+import Header from "../components/layout/Header";
 
-// export default function Dashboard() {
-//   const { user, logout } = useAuth();
+import UploadCard from "../components/document/UploadCard";
+import DocumentList from "../components/document/DocumentList";
 
-//   return (
-//     <div style={{ padding: 40 }}>
-//       <h1>🎉 Dashboard</h1>
+import ToolLogs from "../components/tools/ToolLogs";
 
-//       <p>Welcome</p>
-
-//       <h3>{user?.email}</h3>
-
-//       <button onClick={logout}>Logout</button>
-//     </div>
-//   );
-// }
+import ChatWindow from "../components/chat/ChatWindow";
 
 import { useWorkspace } from "../context/WorkspaceContext";
-import WorkspaceForm from "../components/workspace/WorkspaceForm";
 
 export default function Dashboard() {
-  const { workspaces, activeWorkspace } = useWorkspace();
+  const { activeWorkspace } = useWorkspace();
 
   return (
-    <div style={{ padding: 30 }}>
-      <h1>Dashboard</h1>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+      }}
+    >
+      <Sidebar />
 
-      <WorkspaceForm />
+      <div
+        style={{
+          flex: 1,
+          background: "#f8fafc",
+          overflowY: "auto",
+        }}
+      >
+        <Header />
 
-      <hr />
+        <div
+          style={{
+            padding: "25px",
+            width: "100%",
+            boxSizing: "border-box",
+          }}
+        >
+          {!activeWorkspace ? (
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 12,
+                padding: 50,
+                textAlign: "center",
+                boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+              }}
+            >
+              <h2
+                style={{
+                  marginBottom: 15,
+                }}
+              >
+                📂 No Workspace Available
+              </h2>
 
-      <h2>Current Workspace</h2>
+              <p
+                style={{
+                  color: "#64748b",
+                  fontSize: 16,
+                }}
+              >
+                Create your first workspace from the left sidebar to start
+                uploading documents and chatting with AI.
+              </p>
+            </div>
+          ) : (
+            <>
+              <UploadCard />
 
-      <pre>{JSON.stringify(activeWorkspace, null, 2)}</pre>
+              <DocumentList />
 
-      <hr />
+              <ToolLogs />
 
-      <h2>All Workspaces</h2>
-
-      <pre>{JSON.stringify(workspaces, null, 2)}</pre>
+              <ChatWindow />
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

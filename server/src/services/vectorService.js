@@ -49,3 +49,56 @@ export const saveChunks = async ({
 
   return true;
 };
+
+export const getDocumentsByWorkspace = async (workspaceId) => {
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("workspace_id", workspaceId)
+    .order("uploaded_at", { ascending: false });
+
+  if (error) throw error;
+
+  return data;
+};
+
+export const deleteDocument = async (documentId) => {
+  const { error } = await supabase
+    .from("documents")
+    .delete()
+    .eq("id", documentId);
+
+  if (error) throw error;
+
+  return true;
+};
+
+export const saveChatHistory = async ({
+  workspaceId,
+  userId,
+  question,
+  answer,
+}) => {
+  const { error } = await supabase.from("chat_history").insert({
+    workspace_id: workspaceId,
+    user_id: userId,
+    question,
+    answer,
+  });
+
+  if (error) throw error;
+
+  return true;
+};
+
+export const getChatHistoryByWorkspace = async (workspaceId) => {
+  const { data, error } = await supabase
+    .from("chat_history")
+    .select("*")
+    .eq("workspace_id", workspaceId)
+    .order("created_at", { ascending: true });
+
+  if (error) throw error;
+
+  return data;
+};

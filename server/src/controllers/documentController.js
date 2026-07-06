@@ -5,6 +5,8 @@ import {
   findDuplicateDocument,
   saveDocument,
   saveChunks,
+  getDocumentsByWorkspace,
+  deleteDocument,
 } from "../services/vectorService.js";
 import { generateFileHash } from "../utils/hashFile.js";
 
@@ -26,10 +28,8 @@ export const uploadDocument = async (req, res) => {
       });
     }
 
-    // Generate file hash
     const fileHash = generateFileHash(req.file.path);
 
-    // Check duplicate
     const duplicate = await findDuplicateDocument(workspaceId, fileHash);
 
     if (duplicate) {
@@ -39,23 +39,18 @@ export const uploadDocument = async (req, res) => {
       });
     }
 
-    // Extract PDF text
     const text = await extractPdfText(req.file.path);
 
-    // Split into chunks
     const chunks = chunkText(text);
 
-    // Generate embeddings
     const embeddings = await generateEmbeddings(chunks);
 
-    // Save document metadata
     const document = await saveDocument({
       workspaceId,
       filename: req.file.originalname,
       fileHash,
     });
 
-    // Save chunks + embeddings
     await saveChunks({
       workspaceId,
       documentId: document.id,
@@ -68,6 +63,46 @@ export const uploadDocument = async (req, res) => {
       documentId: document.id,
       filename: document.filename,
       totalChunks: chunks.length,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getDocuments = async (req, res) => {
+  try {
+    const { workspaceId } = req.params;
+
+    const documents = await getDocumentsByWorkspace(workspaceId);
+
+    return res.json({
+      success: true,
+      documents,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const removeDocument = async (req, res) => {
+  try {
+    const { documentId } = req.params;
+
+    await deleteDocument(documentId);
+
+    return res.json({
+      success: true,
+      message: "Document deleted successfully",
     });
   } catch (error) {
     console.error(error);

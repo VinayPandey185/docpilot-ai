@@ -6,6 +6,7 @@ import morgan from "morgan";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import toolRoutes from "./routes/toolRoutes.js";
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/chat", chatRoutes);
+app.use("/api/tools", toolRoutes);
 
 app.get("/", (req, res) => {
   res.json({
