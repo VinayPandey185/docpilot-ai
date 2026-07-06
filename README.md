@@ -884,7 +884,7 @@ If you would like to improve DocPilot AI:
 
 GitHub
 
-https://github.com/VinayPandey185
+https://github.com/VinayPandey185/docpilot-ai
 
 LinkedIn
 
@@ -892,13 +892,7 @@ https://www.linkedin.com/in/vinay-pandey-855579134/
 
 ---
 
-# 📄 License
-
-This project is developed for educational purposes as part of the **Abstrabit Technology AI Engineer Assignment**.
-
----
-
-# 🙏 Acknowledgements
+# Acknowledgements
 
 This project was built using:
 
