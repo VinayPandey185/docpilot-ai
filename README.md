@@ -258,9 +258,6 @@ docpilot-ai/
 ├── server/
 │   ├── src/
 │   │
-│   ├── agents/
-│   │   └── agentService.js
-│   │
 │   ├── config/
 │   │   ├── env.js
 │   │   └── supabase.js
@@ -283,10 +280,6 @@ docpilot-ai/
 │   │   ├── documentRoutes.js
 │   │   ├── toolRoutes.js
 │   │   └── workspaceRoutes.js
-
-
-
-
 ├── services/ai
         └── agentService.js
 │   │   ├── embeddingService.js
