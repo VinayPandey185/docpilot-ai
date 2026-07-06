@@ -283,11 +283,18 @@ docpilot-ai/
 │   │   ├── documentRoutes.js
 │   │   ├── toolRoutes.js
 │   │   └── workspaceRoutes.js
-│   │
-│   ├── services/
+
+
+
+
+├── services/ai
+        └── agentService.js
 │   │   ├── embeddingService.js
 │   │   ├── groqService.js
 │   │   ├── retrievalService.js
+│   │   
+│   │
+│   ├── services/
 │   │   ├── vectorService.js
 │   │   ├── chunkService.js
 │   │   ├── documentService.js
