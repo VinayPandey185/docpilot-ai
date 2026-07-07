@@ -34,21 +34,33 @@ export const askQuestion = async (req, res) => {
       answer,
     });
 
-    // Remove duplicate source documents
+    // Select the most relevant source document
     const sortedChunks = [...chunks].sort(
       (a, b) => b.similarity - a.similarity,
     );
 
     const topChunk = sortedChunks[0];
 
-    const uniqueSources = topChunk
-      ? [
-          {
-            filename: topChunk.filename,
-            pageNumber: topChunk.page_number,
-          },
-        ]
-      : [];
+    // Don't show sources when the AI couldn't answer
+    const normalizedAnswer = answer.toLowerCase();
+
+    const noAnswer =
+      normalizedAnswer.includes("couldn't find") ||
+      normalizedAnswer.includes("could not find") ||
+      normalizedAnswer.includes("not found") ||
+      normalizedAnswer.includes("don't have information") ||
+      normalizedAnswer.includes("do not have information") ||
+      normalizedAnswer.includes("no relevant information");
+
+    const uniqueSources =
+      !noAnswer && topChunk
+        ? [
+            {
+              filename: topChunk.filename,
+              pageNumber: topChunk.page_number,
+            },
+          ]
+        : [];
 
     return res.json({
       success: true,

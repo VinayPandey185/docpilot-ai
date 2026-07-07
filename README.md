@@ -491,7 +491,7 @@ The user receives:
 | `server/src/routes` | Defines all REST API endpoints |
 | `server/src/services` | Implements business logic, RAG pipeline, embedding generation, retrieval, and AI interaction |
 | `server/src/repositories` | Performs database operations with Supabase and PostgreSQL |
-| `server/src/agents` | AI Agent responsible for deciding whether to answer using RAG or execute backend tools |
+| `server/src/services/ai/agentservice` | AI Agent responsible for deciding whether to answer using RAG or execute backend tools |
 | `server/src/middleware` | Authentication, authorization, and file upload middleware |
 | `server/src/config` | Application configuration, environment variables, and Supabase client |
 | `server/src/utils` | Helper utilities such as file hashing and reusable functions |
