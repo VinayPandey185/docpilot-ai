@@ -16,7 +16,7 @@ export default function UploadCard() {
       return;
     }
 
-    fileRef.current.click();
+    fileRef.current?.click();
   };
 
   const handleFileChange = async (e) => {
@@ -33,12 +33,14 @@ export default function UploadCard() {
       refreshDocuments();
 
       toast.success("PDF uploaded successfully");
-
-      fileRef.current.value = "";
     } catch (err) {
       toast.error(err.response?.data?.message || "Upload failed");
     } finally {
       setLoading(false);
+
+      if (fileRef.current) {
+        fileRef.current.value = "";
+      }
     }
   };
 
