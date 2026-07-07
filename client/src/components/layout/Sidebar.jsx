@@ -5,8 +5,13 @@ import { useWorkspace } from "../../context/WorkspaceContext";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Sidebar() {
-  const { workspaces, activeWorkspace, selectWorkspace, addWorkspace } =
-    useWorkspace();
+  const {
+    workspaces,
+    activeWorkspace,
+    selectWorkspace,
+    addWorkspace,
+    removeWorkspace,
+  } = useWorkspace();
 
   const { user, logout } = useAuth();
 
@@ -31,6 +36,22 @@ export default function Sidebar() {
       toast.error(err.message || "Failed to create workspace");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDeleteWorkspace = async (workspaceId) => {
+    const confirmed = window.confirm(
+      "Delete this workspace?\n\nAll documents, chats, tasks and tool logs will also be deleted.",
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await removeWorkspace(workspaceId);
+
+      toast.success("Workspace deleted successfully.");
+    } catch (err) {
+      toast.error(err.message || "Failed to delete workspace.");
     }
   };
 
@@ -175,7 +196,9 @@ export default function Sidebar() {
                 marginBottom: 10,
                 borderRadius: 10,
                 cursor: "pointer",
-                transition: "0.2s",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
                 background:
                   activeWorkspace?.id === workspace.id ? "#2563eb" : "#1e293b",
                 border:
@@ -184,7 +207,24 @@ export default function Sidebar() {
                     : "1px solid transparent",
               }}
             >
-              🏢 {workspace.name}
+              <span>🏢 {workspace.name}</span>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteWorkspace(workspace.id);
+                }}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  color: "#f87171",
+                  cursor: "pointer",
+                  fontSize: 18,
+                }}
+                title="Delete Workspace"
+              >
+                🗑️
+              </button>
             </div>
           ))
         )}

@@ -26,3 +26,26 @@ export const getWorkspacesService = async (user) => {
 
   return data;
 };
+
+export const deleteWorkspaceService = async ({ workspaceId, user }) => {
+  // Verify workspace belongs to logged-in user
+  const { data: workspace, error: findError } = await supabase
+    .from("workspaces")
+    .select("id")
+    .eq("id", workspaceId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (findError || !workspace) {
+    throw new Error("Workspace not found.");
+  }
+
+  const { error } = await supabase
+    .from("workspaces")
+    .delete()
+    .eq("id", workspaceId);
+
+  if (error) throw error;
+
+  return true;
+};

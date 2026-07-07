@@ -1,6 +1,7 @@
 import {
   createWorkspaceService,
   getWorkspacesService,
+  deleteWorkspaceService,
 } from "../services/workspaceService.js";
 
 export const createWorkspace = async (req, res) => {
@@ -29,6 +30,25 @@ export const getWorkspaces = async (req, res) => {
     res.status(200).json({
       success: true,
       data: result,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const deleteWorkspace = async (req, res) => {
+  try {
+    await deleteWorkspaceService({
+      workspaceId: req.params.workspaceId,
+      user: req.user,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Workspace deleted successfully.",
     });
   } catch (error) {
     res.status(500).json({

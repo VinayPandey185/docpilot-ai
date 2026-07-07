@@ -1,5 +1,9 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { createWorkspace, getWorkspaces } from "../services/workspaceService";
+import {
+  createWorkspace,
+  deleteWorkspace,
+  getWorkspaces,
+} from "../services/workspaceService";
 import { useAuth } from "./AuthContext";
 
 const WorkspaceContext = createContext();
@@ -31,7 +35,6 @@ export function WorkspaceProvider({ children }) {
       setLoading(true);
       loadWorkspaces();
     } else {
-      // Clear workspace state when user logs out
       localStorage.removeItem("activeWorkspace");
 
       setWorkspaces([]);
@@ -67,6 +70,7 @@ export function WorkspaceProvider({ children }) {
       } else {
         setActiveWorkspace(null);
         setSelectedDocument(null);
+        localStorage.removeItem("activeWorkspace");
       }
     } catch (error) {
       console.error("Failed to load workspaces:", error);
@@ -90,6 +94,30 @@ export function WorkspaceProvider({ children }) {
     localStorage.setItem("activeWorkspace", workspace.id);
   };
 
+  const removeWorkspace = async (workspaceId) => {
+    await deleteWorkspace(workspaceId);
+
+    const updatedWorkspaces = workspaces.filter(
+      (workspace) => workspace.id !== workspaceId,
+    );
+
+    setWorkspaces(updatedWorkspaces);
+
+    if (activeWorkspace?.id === workspaceId) {
+      if (updatedWorkspaces.length > 0) {
+        setActiveWorkspace(updatedWorkspaces[0]);
+        setSelectedDocument(null);
+
+        localStorage.setItem("activeWorkspace", updatedWorkspaces[0].id);
+      } else {
+        setActiveWorkspace(null);
+        setSelectedDocument(null);
+
+        localStorage.removeItem("activeWorkspace");
+      }
+    }
+  };
+
   const selectWorkspace = (workspace) => {
     setActiveWorkspace(workspace);
     setSelectedDocument(null);
@@ -106,6 +134,7 @@ export function WorkspaceProvider({ children }) {
         setSelectedDocument,
         loading,
         addWorkspace,
+        removeWorkspace,
         selectWorkspace,
         loadWorkspaces,
         documentVersion,
