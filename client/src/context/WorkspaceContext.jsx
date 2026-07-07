@@ -1,26 +1,45 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createWorkspace, getWorkspaces } from "../services/workspaceService";
+import { useAuth } from "./AuthContext";
 
 const WorkspaceContext = createContext();
 
 export function WorkspaceProvider({ children }) {
+  const { user } = useAuth();
+
   const [workspaces, setWorkspaces] = useState([]);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
   const [selectedDocument, setSelectedDocument] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Used to refresh Tool Logs without reloading the page
   const [toolLogsVersion, setToolLogsVersion] = useState(0);
 
   const refreshToolLogs = () => {
     setToolLogsVersion((prev) => prev + 1);
   };
 
-  // Used to refresh document list without reloading the page
+  // Used to refresh Document List without reloading the page
   const [documentVersion, setDocumentVersion] = useState(0);
 
+  const refreshDocuments = () => {
+    setDocumentVersion((prev) => prev + 1);
+  };
+
   useEffect(() => {
-    loadWorkspaces();
-  }, []);
+    if (user) {
+      setLoading(true);
+      loadWorkspaces();
+    } else {
+      // Clear workspace state when user logs out
+      localStorage.removeItem("activeWorkspace");
+
+      setWorkspaces([]);
+      setActiveWorkspace(null);
+      setSelectedDocument(null);
+      setLoading(false);
+    }
+  }, [user]);
 
   const loadWorkspaces = async () => {
     try {
@@ -35,16 +54,26 @@ export function WorkspaceProvider({ children }) {
 
         if (workspace) {
           setActiveWorkspace(workspace);
+          setSelectedDocument(null);
           return;
         }
       }
 
       if (data.length > 0) {
         setActiveWorkspace(data[0]);
+        setSelectedDocument(null);
+
         localStorage.setItem("activeWorkspace", data[0].id);
+      } else {
+        setActiveWorkspace(null);
+        setSelectedDocument(null);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to load workspaces:", error);
+
+      setWorkspaces([]);
+      setActiveWorkspace(null);
+      setSelectedDocument(null);
     } finally {
       setLoading(false);
     }
@@ -56,7 +85,6 @@ export function WorkspaceProvider({ children }) {
     setWorkspaces((prev) => [...prev, workspace]);
 
     setActiveWorkspace(workspace);
-
     setSelectedDocument(null);
 
     localStorage.setItem("activeWorkspace", workspace.id);
@@ -64,15 +92,9 @@ export function WorkspaceProvider({ children }) {
 
   const selectWorkspace = (workspace) => {
     setActiveWorkspace(workspace);
-
     setSelectedDocument(null);
 
     localStorage.setItem("activeWorkspace", workspace.id);
-  };
-
-  // Refresh documents without reloading the browser
-  const refreshDocuments = () => {
-    setDocumentVersion((prev) => prev + 1);
   };
 
   return (

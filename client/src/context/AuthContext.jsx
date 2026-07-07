@@ -18,7 +18,7 @@ export function AuthProvider({ children }) {
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
       setLoading(false);
     });
@@ -27,9 +27,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   const initializeAuth = async () => {
-    const currentUser = await getCurrentUser();
-    setUser(currentUser);
-    setLoading(false);
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+    } catch (error) {
+      console.error("Failed to initialize authentication:", error);
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signup = async (userData) => {
@@ -41,8 +47,16 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    await signOut();
-    setUser(null);
+    try {
+      await signOut();
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      // Clear local application state
+      localStorage.removeItem("activeWorkspace");
+
+      setUser(null);
+    }
   };
 
   return (
