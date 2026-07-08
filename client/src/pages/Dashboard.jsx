@@ -11,8 +11,7 @@ import ChatWindow from "../components/chat/ChatWindow";
 import { useWorkspace } from "../context/WorkspaceContext";
 
 export default function Dashboard() {
-  const { activeWorkspace } = useWorkspace();
-
+  const { activeWorkspace, loading: workspaceLoading } = useWorkspace();
   return (
     <div
       style={{
@@ -38,7 +37,19 @@ export default function Dashboard() {
             boxSizing: "border-box",
           }}
         >
-          {!activeWorkspace ? (
+          {workspaceLoading ? (
+            <div
+              style={{
+                background: "#fff",
+                borderRadius: 12,
+                padding: 50,
+                textAlign: "center",
+                boxShadow: "0 2px 8px rgba(0,0,0,.08)",
+              }}
+            >
+              <h2>Loading workspace...</h2>
+            </div>
+          ) : !activeWorkspace ? (
             <div
               style={{
                 background: "#fff",

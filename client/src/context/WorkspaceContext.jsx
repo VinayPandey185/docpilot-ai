@@ -9,7 +9,7 @@ import { useAuth } from "./AuthContext";
 const WorkspaceContext = createContext();
 
 export function WorkspaceProvider({ children }) {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
 
   const [workspaces, setWorkspaces] = useState([]);
   const [activeWorkspace, setActiveWorkspace] = useState(null);
@@ -31,6 +31,9 @@ export function WorkspaceProvider({ children }) {
   };
 
   useEffect(() => {
+    // Wait until authentication is fully initialized
+    if (authLoading) return;
+
     if (user) {
       setLoading(true);
       loadWorkspaces();
@@ -42,7 +45,7 @@ export function WorkspaceProvider({ children }) {
       setSelectedDocument(null);
       setLoading(false);
     }
-  }, [user]);
+  }, [user, authLoading]);
 
   const loadWorkspaces = async () => {
     try {

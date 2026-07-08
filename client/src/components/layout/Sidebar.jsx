@@ -8,6 +8,7 @@ export default function Sidebar() {
   const {
     workspaces,
     activeWorkspace,
+    loading: workspaceLoading,
     selectWorkspace,
     addWorkspace,
     removeWorkspace,
@@ -16,7 +17,7 @@ export default function Sidebar() {
   const { user, logout } = useAuth();
 
   const [workspaceName, setWorkspaceName] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [creatingWorkspace, setCreatingWorkspace] = useState(false);
 
   const handleCreateWorkspace = async () => {
     if (!workspaceName.trim()) {
@@ -25,7 +26,7 @@ export default function Sidebar() {
     }
 
     try {
-      setLoading(true);
+      setCreatingWorkspace(true);
 
       await addWorkspace(workspaceName.trim());
 
@@ -35,7 +36,7 @@ export default function Sidebar() {
     } catch (err) {
       toast.error(err.message || "Failed to create workspace");
     } finally {
-      setLoading(false);
+      setCreatingWorkspace(false);
     }
   };
 
@@ -65,13 +66,14 @@ export default function Sidebar() {
     <div
       style={{
         width: 300,
+        height: "100vh",
         background: "#0f172a",
         color: "#fff",
-        minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         borderRight: "1px solid #1e293b",
+        overflowY: "auto",
       }}
     >
       <div style={{ padding: 20 }}>
@@ -156,7 +158,27 @@ export default function Sidebar() {
           📂 Your Workspaces
         </h3>
 
-        {workspaces.length === 0 ? (
+        {workspaceLoading ? (
+          <div
+            style={{
+              background: "#1e293b",
+              padding: 15,
+              borderRadius: 10,
+              marginBottom: 20,
+              border: "1px solid #334155",
+            }}
+          >
+            <p
+              style={{
+                margin: 0,
+                color: "#cbd5e1",
+                fontSize: 14,
+              }}
+            >
+              Loading workspaces...
+            </p>
+          </div>
+        ) : workspaces.length === 0 ? (
           <div
             style={{
               background: "#1e293b",
@@ -265,7 +287,7 @@ export default function Sidebar() {
 
           <button
             onClick={handleCreateWorkspace}
-            disabled={loading}
+            disabled={creatingWorkspace}
             style={{
               width: "100%",
               marginTop: 12,
@@ -278,7 +300,7 @@ export default function Sidebar() {
               fontWeight: 600,
             }}
           >
-            {loading ? "Creating..." : "➕ Create Workspace"}
+            {creatingWorkspace ? "Creating..." : "➕ Create Workspace"}
           </button>
         </div>
       </div>
