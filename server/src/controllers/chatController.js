@@ -27,6 +27,7 @@ export const askQuestion = async (req, res) => {
       question,
       chunks,
     });
+
     await saveChatHistory({
       workspaceId,
       userId: req.user.id,
@@ -41,9 +42,9 @@ export const askQuestion = async (req, res) => {
 
     const topChunk = sortedChunks[0];
 
-    // Don't show sources when the AI couldn't answer
     const normalizedAnswer = answer.toLowerCase();
 
+    // Don't show sources when AI couldn't answer
     const noAnswer =
       normalizedAnswer.includes("couldn't find") ||
       normalizedAnswer.includes("could not find") ||
@@ -52,8 +53,15 @@ export const askQuestion = async (req, res) => {
       normalizedAnswer.includes("do not have information") ||
       normalizedAnswer.includes("no relevant information");
 
+    // Don't show PDF sources for task responses
+    const isTaskResponse =
+      normalizedAnswer.includes("(pending)") ||
+      normalizedAnswer.includes("(completed)") ||
+      normalizedAnswer.includes("task saved successfully") ||
+      normalizedAnswer.includes("you don't have any tasks");
+
     const uniqueSources =
-      !noAnswer && topChunk
+      !noAnswer && !isTaskResponse && topChunk
         ? [
             {
               filename: topChunk.filename,
